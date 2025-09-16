@@ -35,6 +35,9 @@ def number_guessing_game():
             break
         elif user_guess > random_number:
             print("Too High! Try again")
+        elif attempt >= 5:
+            print("Your chance is over. You Lose!")
+            break
         else:
             print("Too Low! Try again")
 
