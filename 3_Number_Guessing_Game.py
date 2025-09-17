@@ -1,62 +1,84 @@
 import random
-
-def best_score(attempt):
-    best_score_in_game = 0
-    if best_score_in_game == 0:
-        best_score_in_game += attempt
-        return best_score_in_game
-    else:
-        if best_score_in_game < attempt:
-            best_score_in_game == attempt
-        else:
-            return best_score_in_game
+import sys # Digunakan untuk nilai 'infinity'
 
 def number_guessing_game():
+    """
+    Fungsi utama untuk menjalankan permainan tebak angka.
+    Mencakup semua fitur tambahan: rentang dinamis, batas percobaan, dan skor terbaik.
+    """
+    # Inisialisasi skor terbaik di luar loop utama permainan.
+    # float('inf') adalah cara mudah untuk memastikan percobaan pertama selalu menjadi skor terbaik.
+    best_score = float('inf') 
+    
+    print("Selamat datang di Permainan Tebak Angka! 🎲")
+
     while True:
-        play_game = input('Play this game?(y/n): ')
-        if play_game == "y" or play_game == "Y":
-            while True:
-                try:
-                    range_number_minimum = int(input('Enter the minimum number: '))
-                    break
-                except ValueError:
-                    print("Error value! input must number")
-                    continue
-            while True:
-                try:
-                    range_number_maximum = int(input('Enter the maximum number: '))
-                    break
-                except ValueError:
-                    print("Error value! Input must number")
-                    continue
+        # Menggunakan .lower() untuk menyederhanakan pengecekan input (menerima 'y' atau 'Y')
+        play_game = input('\nApakah Anda ingin bermain? (y/n): ').lower()
 
-            random_number = random.randint(range_number_minimum, range_number_maximum)
-            attempt = 0
-
-            while True:
+        if play_game == 'y':
+            try:
+                # Meminta semua pengaturan di awal
+                min_num = int(input('Masukkan angka minimum: '))
+                max_num = int(input('Masukkan angka maksimum: '))
+                max_attempts = int(input('Masukkan batas percobaan (misal: 5): '))
                 
-                try:
-                    user_guess = int(input(f'Guess the number!(between {range_number_minimum} - {range_number_maximum}): '))
-                    attempt += 1
-                except ValueError:
-                    print("Input must number!")
+                # Validasi sederhana untuk rentang angka
+                if min_num >= max_num:
+                    print("Angka minimum harus lebih kecil dari angka maksimum. Coba lagi.")
                     continue
 
-                if user_guess == random_number:
-                    print(
-                        f"Congratulations!, you guess the number in {attempt} attempt\nYour best score is {best_score(attempt)} attempt")
-                    break
-                elif user_guess > random_number:
-                    print("Too High! Try again")
-                elif attempt >= 5:
-                    print("Your chance is over. You Lose!")
-                    break
-                else:
-                    print("Too Low! Try again")
-        elif play_game == "n" or play_game == "Y":
-            break
-        else:
-            print("Y/N ? ")
+            except ValueError:
+                print("Input tidak valid! Harap masukkan angka.")
+                continue
 
+            # Menghasilkan angka rahasia untuk ronde ini
+            secret_number = random.randint(min_num, max_num)
+            attempts = 0
+            
+            print(f"\nSaya telah memilih angka antara {min_num} dan {max_num}. Anda punya {max_attempts} percobaan.")
+
+            # Loop utama untuk menebak
+            while attempts < max_attempts:
+                try:
+                    guess_str = input(f"Percobaan ke-{attempts + 1}: Masukkan tebakan Anda: ")
+                    user_guess = int(guess_str)
+                except ValueError:
+                    print("Input harus berupa angka!")
+                    continue
+
+                attempts += 1 # Tambah percobaan setelah input valid
+
+                # Logika pengecekan tebakan
+                if user_guess == secret_number:
+                    print(f"🎉 Selamat! Anda berhasil menebak angka {secret_number} dalam {attempts} percobaan.")
+                    
+                    # Cek dan perbarui skor terbaik
+                    if attempts < best_score:
+                        best_score = attempts
+                        print(f"✨ Skor terbaik baru! Yaitu {best_score} percobaan.")
+                    
+                    break # Keluar dari loop tebakan karena sudah menang
+                elif user_guess < secret_number:
+                    print("Terlalu rendah! Coba lagi.")
+                else: # user_guess > secret_number
+                    print("Terlalu tinggi! Coba lagi.")
+
+            # Kondisi jika loop selesai tanpa menebak dengan benar (kalah)
+            if user_guess != secret_number:
+                print(f"\nMaaf, kesempatan Anda habis. Angka yang benar adalah {secret_number}. 😔")
+        
+        elif play_game == 'n':
+            print("Terima kasih sudah bermain!")
+            break # Keluar dari loop utama dan mengakhiri program
+        
+        else:
+            print("Input tidak valid. Harap masukkan 'y' untuk bermain atau 'n' untuk keluar.")
+        
+        # Tampilkan skor terbaik saat ini jika sudah pernah menang
+        if best_score != float('inf'):
+            print(f"Skor terbaik Anda sejauh ini: {best_score} percobaan.")
+
+# Menjalankan fungsi utama permainan
 if __name__ == "__main__":
     number_guessing_game()
